@@ -70,7 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
           context: context,
           builder: (ctx) => AlertDialog(
                 title: Text("회원가입 성공"),
-                content: Text("${name}님 반갑습니다."),
+                content: Text("$name님 반갑습니다."),
                 actions: [
                   TextButton(
                     onPressed: () {
