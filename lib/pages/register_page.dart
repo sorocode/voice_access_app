@@ -183,8 +183,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         ? '생일: ${birthday!.toLocal().toString().split(" ")[0]}'
                         : '생일을 선택해주세요'),
                     Spacer(),
-                    ElevatedButton(
-                      child: Text('생일 선택'),
+                    IconButton(
+                      icon: Icon(Icons.calendar_month),
                       onPressed: () async {
                         DateTime? picked = await showDatePicker(
                           context: context,
@@ -200,13 +200,16 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: showRecordingDrawer,
-                  child: Text('음성 녹음하기 (5개)'),
+                  child: Text('🎙️ 음성 녹음하기 (5개)'),
                 ),
                 Text('녹음된 파일: ${voiceFiles.length}개'),
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: submitForm,
-                  child: Text('회원가입 제출'),
+                  child: Text(
+                    '✅ 회원가입 제출',
+                    style: TextStyle(fontWeight: FontWeight.w800),
+                  ),
                 ),
               ],
             ),

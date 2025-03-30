@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:voice_access_app/voice_access.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 159, 222, 204),
+  seedColor: const Color.fromARGB(79, 37, 103, 255),
 );
 var kDarkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
-  seedColor: const Color.fromARGB(255, 5, 77, 125),
+  seedColor: const Color.fromARGB(255, 77, 155, 207),
 );
 void main() {
   runApp(MaterialApp(
@@ -38,8 +38,8 @@ void main() {
                   fontSize: 16),
             ),
         appBarTheme: const AppBarTheme().copyWith(
-            backgroundColor: kColorScheme.onPrimaryContainer,
-            foregroundColor: kColorScheme.primaryContainer)),
+            backgroundColor: kColorScheme.onSecondaryContainer,
+            foregroundColor: kColorScheme.secondaryContainer)),
     themeMode: ThemeMode.system,
     home: VoiceAccess(),
   ));
