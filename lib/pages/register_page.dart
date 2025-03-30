@@ -62,6 +62,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     // 백엔드로 요청 전송
     try {
+      // FIXME: 서버 배포 후 환경변수로 변경
       Response response = await _dio.post('http://127.0.0.1:8080/api/signup',
           data: formData, options: Options(contentType: "multipart/form-data"));
       print("✅ 회원가입 성공: ${response.data}");
@@ -134,6 +135,15 @@ class _RegisterPageState extends State<RegisterPage> {
                       labelText: '전화번호', hintText: "010-0000-0000"),
                   keyboardType: TextInputType.phone,
                   onSaved: (val) => phone = val ?? '',
+                  validator: (val) {
+                    final phonePattern = RegExp(r'\d{3}-\d{4}-\d{4}$');
+                    if (val == null || val.isEmpty) {
+                      return '전화번호를 입력해주세요.';
+                    } else if (!phonePattern.hasMatch(val)) {
+                      return '전화번호 형식이 올바르지 않습니다. 예: 010-1234-5678';
+                    }
+                    return null;
+                  },
                 ),
                 TextFormField(
                   decoration: InputDecoration(labelText: '주소'),
