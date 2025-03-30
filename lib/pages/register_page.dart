@@ -129,6 +129,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 TextFormField(
                   decoration: InputDecoration(labelText: '이름'),
                   onSaved: (val) => name = val ?? '',
+                  validator: (val) {
+                    if (val == null || val.trim().isEmpty) {
+                      return '이름은 필수 입력값입니다.';
+                    }
+                    return null;
+                  },
                 ),
                 TextFormField(
                   decoration: InputDecoration(
