@@ -63,7 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
     // 백엔드로 요청 전송
     try {
       // FIXME: 서버 배포 후 환경변수로 변경
-      Response response = await _dio.post('http://127.0.0.1:8080/api/signup',
+      Response response = await _dio.post('http://localhost:8080/api/signup',
           data: formData, options: Options(contentType: "multipart/form-data"));
       print("✅ 회원가입 성공: ${response.data}");
       showDialog(
@@ -84,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
     } catch (e) {
       if (e is DioException) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("회원가입 입력값에 문제가 있습니다. 값을 다시 확인해주세요")),
+          SnackBar(content: Text("서버와의 연결에 실패했습니다. 나중에 다시 시도해주세요")),
         );
         print("❌ DioException 발생!");
         print("📡 상태 코드: ${e.response?.statusCode}");
@@ -94,7 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
         print("📦 전송된 데이터: ${e.requestOptions.data}");
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("서버와의 연결에 실패했습니다. 나중에 다시 시도해주세요")),
+          SnackBar(content: Text("알 수 없는 오류가 발생했습니다. 나중에 다시 시도해주세요")),
         );
         print("❌ 예외: $e");
       }
