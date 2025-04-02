@@ -12,6 +12,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final backendUrl =
+      Platform.isAndroid ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
   final _formKey = GlobalKey<FormState>();
   final Dio _dio = Dio();
 
@@ -39,6 +41,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
     _formKey.currentState!.save();
     List<MultipartFile> multipartFiles = [];
+
+    // FIXME: 안드로이드 확장자 관련 수정(wav로 고정해야함)
     for (File file in voiceFiles) {
       multipartFiles.add(
         await MultipartFile.fromFile(
@@ -63,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
     // 백엔드로 요청 전송
     try {
       // FIXME: 서버 배포 후 환경변수로 변경
-      Response response = await _dio.post('http://localhost:8080/api/signup',
+      Response response = await _dio.post('$backendUrl/api/signup',
           data: formData, options: Options(contentType: "multipart/form-data"));
       print("✅ 회원가입 성공: ${response.data}");
       showDialog(
