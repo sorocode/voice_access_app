@@ -13,9 +13,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await dotenv.load(fileName: ".env");
-    print("API_BASE_URL: ${dotenv.env['API_BASE_URL']}");
+    // print("API_BASE_URL: ${dotenv.env['API_BASE_URL']}");
   } catch (e) {
-    print('dotenv load error: $e');
+    // print('dotenv load error: $e');
   }
   runApp(App());
 }

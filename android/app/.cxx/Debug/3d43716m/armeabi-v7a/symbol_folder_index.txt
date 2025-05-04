@@ -1,0 +1,1 @@
+/Users/soroso/Dev/voice-access-project/voice_access_app/build/app/intermediates/cxx/Debug/3d43716m/obj/armeabi-v7a

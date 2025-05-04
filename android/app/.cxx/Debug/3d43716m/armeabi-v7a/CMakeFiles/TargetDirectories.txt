@@ -1,0 +1,2 @@
+/Users/soroso/Dev/voice-access-project/voice_access_app/android/app/.cxx/Debug/3d43716m/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/soroso/Dev/voice-access-project/voice_access_app/android/app/.cxx/Debug/3d43716m/armeabi-v7a/CMakeFiles/rebuild_cache.dir
