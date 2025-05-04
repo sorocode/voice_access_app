@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'package:voice_access_app/widgets/%08Recording_sheet.dart';
 import 'package:http_parser/http_parser.dart';
@@ -12,8 +13,9 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final backendUrl =
-      Platform.isAndroid ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
+  // final backendUrl =
+  //   Platform.isAndroid ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
+  late String backendUrl;
   final _formKey = GlobalKey<FormState>();
   final Dio _dio = Dio();
 
@@ -66,7 +68,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
     // 백엔드로 요청 전송
     try {
-      // FIXME: 서버 배포 후 환경변수로 변경
       Response response = await _dio.post('$backendUrl/api/signup',
           data: formData, options: Options(contentType: "multipart/form-data"));
       print("✅ 회원가입 성공: ${response.data}");
@@ -103,6 +104,12 @@ class _RegisterPageState extends State<RegisterPage> {
         print("❌ 예외: $e");
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    backendUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:voice_access_app/pages/register_page.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +18,8 @@ class _VoiceAccessState extends State<VoiceAccess> {
   final Dio _dio = Dio();
   bool isLoading = false;
 
+  late String baseUrl;
+
   FlutterSoundRecorder recorder = FlutterSoundRecorder();
   bool isRecording = false;
   File? recordedFile;
@@ -25,6 +28,7 @@ class _VoiceAccessState extends State<VoiceAccess> {
   void initState() {
     super.initState();
     initRecorder();
+    baseUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
   }
 
   Future<void> initRecorder() async {
@@ -64,7 +68,7 @@ class _VoiceAccessState extends State<VoiceAccess> {
 
     try {
       final response = await _dio.post(
-        'http://127.0.0.1:8080/api/login', // FIXME: 백엔드서버 배포 후 환경변수로 넣기
+        '$baseUrl/api/login',
         data: formData,
         options: Options(contentType: "multipart/form-data"),
       );
