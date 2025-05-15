@@ -6,7 +6,7 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
+import 'package:voice_access_app/services/voice_access_service.dart';
 
 class VoiceAccess extends StatefulWidget {
   const VoiceAccess({super.key});
@@ -58,24 +58,12 @@ class _VoiceAccessState extends State<VoiceAccess> {
 
     setState(() => isLoading = true);
 
-    FormData formData = FormData.fromMap({
-      'audio': await MultipartFile.fromFile(
-        recordedFile!.path,
-        filename: 'login_audio.wav',
-        contentType: MediaType('audio', 'wav'),
-      ),
-    });
+    final service = VoiceAccessService(_dio, baseUrl);
 
     try {
-      final response = await _dio.post(
-        '$baseUrl/api/login',
-        data: formData,
-        options: Options(contentType: "multipart/form-data"),
-      );
-
+      final response = await service.loginWithVoice(recordedFile!);
       setState(() => isLoading = false);
 
-      //  로그인 성공 SnackBar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✅ ${response.data.toString()}'),
@@ -85,7 +73,6 @@ class _VoiceAccessState extends State<VoiceAccess> {
       );
     } catch (e) {
       setState(() => isLoading = false);
-      //  로그인 실패 SnackBar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('❌ 로그인 실패! 음성을 다시 시도해주세요'),

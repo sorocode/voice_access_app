@@ -2,9 +2,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:intl/intl.dart';
+import 'package:voice_access_app/services/register_service.dart';
 import 'package:voice_access_app/widgets/%08Recording_sheet.dart';
-import 'package:http_parser/http_parser.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -30,10 +29,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // 음성파일
   List<File> voiceFiles = [];
-
   Future<void> submitForm() async {
-    final birthdayFormatted = DateFormat('yyyy-MM-dd').format(birthday!);
     if (!_formKey.currentState!.validate()) return;
+
     if (voiceFiles.length != 5) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("음성 파일 5개를 업로드해주세요.")),
@@ -42,50 +40,39 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     _formKey.currentState!.save();
-    List<MultipartFile> multipartFiles = [];
 
-    // FIXME: 안드로이드 확장자 관련 수정(wav로 고정해야함)
-    for (File file in voiceFiles) {
-      multipartFiles.add(
-        await MultipartFile.fromFile(
-          file.path,
-          filename: file.path.split('/').last,
-          contentType: MediaType('audio', 'wav'),
+    final api = RegisterService(_dio, backendUrl);
+
+    try {
+      final response = await api.submitRegistration(
+        name: name,
+        phone: phone,
+        address: address,
+        weight: weight,
+        height: height,
+        gender: gender,
+        birthday: birthday!,
+        voiceFiles: voiceFiles,
+      );
+
+      print("✅ 회원가입 성공: ${response.data}");
+
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text("회원가입 성공"),
+          content: Text("$name님 반갑습니다."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+              child: Text("확인"),
+            ),
+          ],
         ),
       );
-    }
-
-    FormData formData = FormData.fromMap({
-      'username': name,
-      'phoneNumber': phone,
-      'homeAddress': address,
-      'weight': double.parse(weight),
-      'height': double.parse(height),
-      'gender': gender,
-      'birthday': birthdayFormatted,
-      'voiceFiles': multipartFiles,
-    });
-
-    // 백엔드로 요청 전송
-    try {
-      Response response = await _dio.post('$backendUrl/api/signup',
-          data: formData, options: Options(contentType: "multipart/form-data"));
-      print("✅ 회원가입 성공: ${response.data}");
-      showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                title: Text("회원가입 성공"),
-                content: Text("$name님 반갑습니다."),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(); // 알림창 닫기
-                      Navigator.of(context).pop(); // 이전 화면으로 돌아가기 (선택)
-                    },
-                    child: Text("확인"),
-                  ),
-                ],
-              ));
     } catch (e) {
       if (e is DioException) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -94,9 +81,6 @@ class _RegisterPageState extends State<RegisterPage> {
         print("❌ DioException 발생!");
         print("📡 상태 코드: ${e.response?.statusCode}");
         print("📄 응답 데이터: ${e.response?.data}");
-        print("📋 응답 헤더: ${e.response?.headers}");
-        print("🔗 요청 경로: ${e.requestOptions.path}");
-        print("📦 전송된 데이터: ${e.requestOptions.data}");
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("알 수 없는 오류가 발생했습니다. 나중에 다시 시도해주세요")),
