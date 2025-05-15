@@ -4,15 +4,15 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class RecordingSheet extends StatefulWidget {
+class RecordingBottomsheet extends StatefulWidget {
   final Function(List<File>) onFinished;
-  const RecordingSheet({super.key, required this.onFinished});
+  const RecordingBottomsheet({super.key, required this.onFinished});
 
   @override
-  State<RecordingSheet> createState() => _RecordingSheetState();
+  State<RecordingBottomsheet> createState() => _RecordingBottomsheetState();
 }
 
-class _RecordingSheetState extends State<RecordingSheet> {
+class _RecordingBottomsheetState extends State<RecordingBottomsheet> {
   FlutterSoundRecorder recorder = FlutterSoundRecorder();
   bool isRecording = false;
   List<File> recordedFiles = [];

@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:voice_access_app/services/register_service.dart';
-import 'package:voice_access_app/widgets/%08Recording_sheet.dart';
+import 'package:voice_access_app/widgets/recording_bottomsheet.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -102,7 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (_) => RecordingSheet(
+        builder: (_) => RecordingBottomsheet(
           onFinished: (List<File> recordedFiles) {
             setState(() {
               voiceFiles = recordedFiles;

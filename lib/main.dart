@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:voice_access_app/voice_access.dart';
+import 'package:voice_access_app/pages/voice_access_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
@@ -59,7 +59,7 @@ class App extends StatelessWidget {
               backgroundColor: kColorScheme.onSecondaryContainer,
               foregroundColor: kColorScheme.secondaryContainer)),
       themeMode: ThemeMode.system,
-      home: VoiceAccess(),
+      home: VoiceAccessPage(),
     );
   }
 }

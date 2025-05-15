@@ -8,13 +8,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
 import 'package:voice_access_app/services/voice_access_service.dart';
 
-class VoiceAccess extends StatefulWidget {
-  const VoiceAccess({super.key});
+class VoiceAccessPage extends StatefulWidget {
+  const VoiceAccessPage({super.key});
   @override
-  State<StatefulWidget> createState() => _VoiceAccessState();
+  State<StatefulWidget> createState() => _VoiceAccessPageState();
 }
 
-class _VoiceAccessState extends State<VoiceAccess> {
+class _VoiceAccessPageState extends State<VoiceAccessPage> {
   final Dio _dio = Dio();
   bool isLoading = false;
 
