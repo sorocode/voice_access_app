@@ -16,7 +16,6 @@ class _RegisterPageState extends State<RegisterPage> {
   //   Platform.isAndroid ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
   late String backendUrl;
   final _formKey = GlobalKey<FormState>();
-  final Dio _dio = Dio();
 
   // 사용자 정보
   String name = '';
@@ -41,7 +40,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     _formKey.currentState!.save();
 
-    final api = RegisterService(_dio, backendUrl);
+    final api = RegisterService();
 
     try {
       final response = await api.submitRegistration(

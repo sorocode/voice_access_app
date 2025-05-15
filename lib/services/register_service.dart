@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
+import 'package:voice_access_app/locator.dart';
 
 class RegisterService {
-  final Dio _dio;
-  final String baseUrl;
+  final dio = getIt<Dio>();
 
-  RegisterService(this._dio, this.baseUrl);
+  RegisterService();
 
   Future<Response> submitRegistration({
     required String name,
@@ -43,8 +43,8 @@ class RegisterService {
       'voiceFiles': multipartFiles,
     });
 
-    return await _dio.post(
-      '$baseUrl/api/signup',
+    return await dio.post(
+      '/api/signup',
       data: formData,
       options: Options(contentType: "multipart/form-data"),
     );

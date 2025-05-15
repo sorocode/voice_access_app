@@ -5,7 +5,6 @@ import 'package:voice_access_app/pages/register_page.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:dio/dio.dart';
 import 'package:voice_access_app/services/voice_access_service.dart';
 
 class VoiceAccessPage extends StatefulWidget {
@@ -15,7 +14,6 @@ class VoiceAccessPage extends StatefulWidget {
 }
 
 class _VoiceAccessPageState extends State<VoiceAccessPage> {
-  final Dio _dio = Dio();
   bool isLoading = false;
 
   late String baseUrl;
@@ -58,7 +56,7 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
 
     setState(() => isLoading = true);
 
-    final service = VoiceAccessService(_dio, baseUrl);
+    final service = VoiceAccessService();
 
     try {
       final response = await service.loginWithVoice(recordedFile!);
