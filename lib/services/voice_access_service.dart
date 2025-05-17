@@ -12,10 +12,15 @@ class VoiceAccessService {
       'audio': await MultipartFile.fromFile(
         audioFile.path,
         filename: 'login_audio.wav',
-        contentType: MediaType('audio', 'wav'),
+        contentType: MediaType('audio', 'x-wav'),
       ),
     });
-
+    if (audioFile.exists() == true) {
+      print("파일: " + audioFile.toString());
+      print("폼데이터" + formData.fields.toString());
+    } else {
+      print("파일이 제대로 입력되지 않았습니다.");
+    }
     return await dio.post(
       '/api/login',
       data: formData,
