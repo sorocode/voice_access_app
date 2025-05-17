@@ -30,7 +30,16 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
   }
 
   Future<void> initRecorder() async {
-    await Permission.microphone.request();
+    var status = await Permission.microphone.request();
+    if (!status.isGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("🎙 마이크 권한이 필요합니다."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
     await recorder.openRecorder();
   }
 
@@ -47,8 +56,29 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
     String? path = await recorder.stopRecorder();
     setState(() {
       isRecording = false;
-      if (path != null) recordedFile = File(path);
     });
+
+    if (path != null) {
+      File file = File(path);
+      bool exists = await file.exists();
+      int size = await file.length();
+      print('📁 녹음 파일 경로: $path');
+      print('✅ 존재 여부: $exists');
+      print('📦 파일 크기: $size bytes');
+
+      if (exists && size > 0) {
+        setState(() {
+          recordedFile = file;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ 파일 저장 실패. 다시 녹음해주세요.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> submitLogin() async {
