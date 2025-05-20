@@ -16,8 +16,8 @@ class VoiceAccessService {
       ),
     });
     if (audioFile.exists() == true) {
-      print("파일: " + audioFile.toString());
-      print("폼데이터" + formData.fields.toString());
+      print("파일: $audioFile");
+      print("폼데이터${formData.fields}");
     } else {
       print("파일이 제대로 입력되지 않았습니다.");
     }
