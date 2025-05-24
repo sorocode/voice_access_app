@@ -67,6 +67,14 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
       print('📦 파일 크기: $size bytes');
 
       if (exists && size > 0) {
+        // FIXME: 디버깅용(나중에 지울 것)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                '📁 녹음 파일 경로: $path ✅ 존재 여부: $exists 📦 파일 크기: $size bytes'),
+            backgroundColor: Colors.green,
+          ),
+        );
         setState(() {
           recordedFile = file;
         });
@@ -103,7 +111,7 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ 로그인 실패! 음성을 다시 시도해주세요'),
+          content: Text('❌ 로그인 실패! 음성녹음을 다시 시도해주세요'),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 3),
         ),
