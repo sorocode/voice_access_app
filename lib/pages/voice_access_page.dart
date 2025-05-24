@@ -31,15 +31,15 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
 
   Future<void> initRecorder() async {
     var status = await Permission.microphone.request();
-    if (!status.isGranted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("🎙 마이크 권한이 필요합니다."),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
+    // if (!status.isGranted) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: Text("🎙 마이크 권한이 필요합니다."),
+    //       backgroundColor: Colors.red,
+    //     ),
+    //   );
+    //   return;
+    // }
     await recorder.openRecorder();
   }
 
