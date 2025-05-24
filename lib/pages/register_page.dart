@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:voice_access_app/models/user.dart';
 import 'package:voice_access_app/services/register_service.dart';
 import 'package:voice_access_app/widgets/recording_bottomsheet.dart';
 
@@ -12,22 +13,24 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // final backendUrl =
-  //   Platform.isAndroid ? 'http://10.0.2.2:8080' : 'http://localhost:8080';
   late String backendUrl;
   final _formKey = GlobalKey<FormState>();
-
+  bool isLoading = false;
   // 사용자 정보
-  String name = '';
-  String phone = '';
-  String address = '';
-  String weight = '';
-  String height = '';
-  String gender = 'MALE';
+  late String _name, _phone, _address, _weight, _height;
+  Gender gender = Gender.MALE;
   DateTime? birthday;
+  User? user;
 
   // 음성파일
   List<File> voiceFiles = [];
+
+  @override
+  void initState() {
+    super.initState();
+    backendUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
+  }
+
   Future<void> submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -40,17 +43,21 @@ class _RegisterPageState extends State<RegisterPage> {
 
     _formKey.currentState!.save();
 
-    final api = RegisterService();
+    user = User(
+      name: _name,
+      phone: _phone,
+      address: _address,
+      weight: _weight,
+      height: _height,
+      gender: gender,
+      birthday: birthday!,
+    );
 
+    final api = RegisterService();
+    setState(() => isLoading = true);
     try {
       final response = await api.submitRegistration(
-        name: name,
-        phone: phone,
-        address: address,
-        weight: weight,
-        height: height,
-        gender: gender,
-        birthday: birthday!,
+        user: user!,
         voiceFiles: voiceFiles,
       );
 
@@ -60,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text("회원가입 성공"),
-          content: Text("$name님 반갑습니다."),
+          content: Text("${user!.name}님 반갑습니다."),
           actions: [
             TextButton(
               onPressed: () {
@@ -86,31 +93,27 @@ class _RegisterPageState extends State<RegisterPage> {
         );
         print("❌ 예외: $e");
       }
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    backendUrl = dotenv.env['API_BASE_URL'] ?? 'http://localhost:8080';
+  void showRecordingDrawer() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => RecordingBottomsheet(
+        onFinished: (List<File> recordedFiles) {
+          setState(() {
+            voiceFiles = recordedFiles;
+          });
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    void showRecordingDrawer() {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (_) => RecordingBottomsheet(
-          onFinished: (List<File> recordedFiles) {
-            setState(() {
-              voiceFiles = recordedFiles;
-            });
-          },
-        ),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(title: Text('회원가입')),
       body: Padding(
@@ -122,19 +125,16 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 TextFormField(
                   decoration: InputDecoration(labelText: '이름'),
-                  onSaved: (val) => name = val ?? '',
-                  validator: (val) {
-                    if (val == null || val.trim().isEmpty) {
-                      return '이름은 필수 입력값입니다.';
-                    }
-                    return null;
-                  },
+                  onSaved: (val) => _name = val ?? '',
+                  validator: (val) => val == null || val.trim().isEmpty
+                      ? '이름은 필수 입력값입니다.'
+                      : null,
                 ),
                 TextFormField(
                   decoration: InputDecoration(
                       labelText: '전화번호', hintText: "010-0000-0000"),
                   keyboardType: TextInputType.phone,
-                  onSaved: (val) => phone = val ?? '',
+                  onSaved: (val) => _phone = val ?? '',
                   validator: (val) {
                     final phonePattern = RegExp(r'\d{3}-\d{4}-\d{4}$');
                     if (val == null || val.isEmpty) {
@@ -147,27 +147,27 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 TextFormField(
                   decoration: InputDecoration(labelText: '주소'),
-                  onSaved: (val) => address = val ?? '',
+                  onSaved: (val) => _address = val ?? '',
                 ),
                 TextFormField(
                   decoration: InputDecoration(labelText: '몸무게'),
                   keyboardType: TextInputType.number,
-                  onSaved: (val) => weight = val ?? '',
+                  onSaved: (val) => _weight = val ?? '',
                 ),
                 TextFormField(
                   decoration: InputDecoration(labelText: '키'),
                   keyboardType: TextInputType.number,
-                  onSaved: (val) => height = val ?? '',
+                  onSaved: (val) => _height = val ?? '',
                 ),
-                DropdownButtonFormField<String>(
+                DropdownButtonFormField<Gender>(
                   value: gender,
-                  items: ['MALE', 'FEMALE']
+                  items: Gender.values
                       .map((g) => DropdownMenuItem(
                             value: g,
-                            child: Text(g),
+                            child: Text(g.name),
                           ))
                       .toList(),
-                  onChanged: (val) => gender = val!,
+                  onChanged: (val) => setState(() => gender = val!),
                   decoration: InputDecoration(labelText: '성별'),
                 ),
                 SizedBox(height: 10),
@@ -200,10 +200,19 @@ class _RegisterPageState extends State<RegisterPage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: submitForm,
-                  child: Text(
-                    '✅ 회원가입 제출',
-                    style: TextStyle(fontWeight: FontWeight.w800),
-                  ),
+                  child: isLoading
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          '✅ 회원가입 제출',
+                          style: TextStyle(fontWeight: FontWeight.w800),
+                        ),
                 ),
               ],
             ),

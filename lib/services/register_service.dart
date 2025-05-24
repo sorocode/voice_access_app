@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 import 'package:voice_access_app/locator.dart';
+import 'package:voice_access_app/models/user.dart';
 
 class RegisterService {
   final dio = getIt<Dio>();
@@ -10,16 +11,10 @@ class RegisterService {
   RegisterService();
 
   Future<Response> submitRegistration({
-    required String name,
-    required String phone,
-    required String address,
-    required String weight,
-    required String height,
-    required String gender,
-    required DateTime birthday,
+    required User user,
     required List<File> voiceFiles,
   }) async {
-    final birthdayFormatted = DateFormat('yyyy-MM-dd').format(birthday);
+    final birthdayFormatted = DateFormat('yyyy-MM-dd').format(user.birthday);
 
     List<MultipartFile> multipartFiles = [];
     for (File file in voiceFiles) {
@@ -33,12 +28,12 @@ class RegisterService {
     }
 
     FormData formData = FormData.fromMap({
-      'username': name,
-      'phoneNumber': phone,
-      'homeAddress': address,
-      'weight': double.parse(weight),
-      'height': double.parse(height),
-      'gender': gender,
+      'username': user.name,
+      'phoneNumber': user.phone,
+      'homeAddress': user.address,
+      'weight': double.parse(user.weight),
+      'height': double.parse(user.height),
+      'gender': user.gender.name, // enum → 문자열
       'birthday': birthdayFormatted,
       'voiceFiles': multipartFiles,
     });
