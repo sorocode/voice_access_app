@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:voice_access_app/voice_access.dart';
+import 'package:voice_access_app/locator.dart';
+import 'package:voice_access_app/pages/voice_access_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
@@ -11,12 +12,14 @@ var kDarkColorScheme = ColorScheme.fromSeed(
 );
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   try {
     await dotenv.load(fileName: ".env");
     // print("API_BASE_URL: ${dotenv.env['API_BASE_URL']}");
   } catch (e) {
     // print('dotenv load error: $e');
   }
+  setupLocator(); // GetIt 사용
   runApp(App());
 }
 
@@ -59,7 +62,7 @@ class App extends StatelessWidget {
               backgroundColor: kColorScheme.onSecondaryContainer,
               foregroundColor: kColorScheme.secondaryContainer)),
       themeMode: ThemeMode.system,
-      home: VoiceAccess(),
+      home: VoiceAccessPage(),
     );
   }
 }

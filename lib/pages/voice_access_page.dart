@@ -5,17 +5,15 @@ import 'package:voice_access_app/pages/register_page.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
+import 'package:voice_access_app/services/voice_access_service.dart';
 
-class VoiceAccess extends StatefulWidget {
-  const VoiceAccess({super.key});
+class VoiceAccessPage extends StatefulWidget {
+  const VoiceAccessPage({super.key});
   @override
-  State<StatefulWidget> createState() => _VoiceAccessState();
+  State<StatefulWidget> createState() => _VoiceAccessPageState();
 }
 
-class _VoiceAccessState extends State<VoiceAccess> {
-  final Dio _dio = Dio();
+class _VoiceAccessPageState extends State<VoiceAccessPage> {
   bool isLoading = false;
 
   late String baseUrl;
@@ -32,7 +30,16 @@ class _VoiceAccessState extends State<VoiceAccess> {
   }
 
   Future<void> initRecorder() async {
-    await Permission.microphone.request();
+    var status = await Permission.microphone.request();
+    // if (!status.isGranted) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: Text("🎙 마이크 권한이 필요합니다."),
+    //       backgroundColor: Colors.red,
+    //     ),
+    //   );
+    //   return;
+    // }
     await recorder.openRecorder();
   }
 
@@ -49,8 +56,37 @@ class _VoiceAccessState extends State<VoiceAccess> {
     String? path = await recorder.stopRecorder();
     setState(() {
       isRecording = false;
-      if (path != null) recordedFile = File(path);
     });
+
+    if (path != null) {
+      File file = File(path);
+      bool exists = await file.exists();
+      int size = await file.length();
+      print('📁 녹음 파일 경로: $path');
+      print('✅ 존재 여부: $exists');
+      print('📦 파일 크기: $size bytes');
+
+      if (exists && size > 0) {
+        // FIXME: 디버깅용(나중에 지울 것)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                '📁 녹음 파일 경로: $path ✅ 존재 여부: $exists 📦 파일 크기: $size bytes'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        setState(() {
+          recordedFile = file;
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ 파일 저장 실패. 다시 녹음해주세요.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> submitLogin() async {
@@ -58,24 +94,12 @@ class _VoiceAccessState extends State<VoiceAccess> {
 
     setState(() => isLoading = true);
 
-    FormData formData = FormData.fromMap({
-      'audio': await MultipartFile.fromFile(
-        recordedFile!.path,
-        filename: 'login_audio.wav',
-        contentType: MediaType('audio', 'wav'),
-      ),
-    });
+    final service = VoiceAccessService();
 
     try {
-      final response = await _dio.post(
-        '$baseUrl/api/login',
-        data: formData,
-        options: Options(contentType: "multipart/form-data"),
-      );
-
+      final response = await service.loginWithVoice(recordedFile!);
       setState(() => isLoading = false);
 
-      //  로그인 성공 SnackBar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('✅ ${response.data.toString()}'),
@@ -85,10 +109,9 @@ class _VoiceAccessState extends State<VoiceAccess> {
       );
     } catch (e) {
       setState(() => isLoading = false);
-      //  로그인 실패 SnackBar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ 로그인 실패! 음성을 다시 시도해주세요'),
+          content: Text('❌ 로그인 실패! 음성녹음을 다시 시도해주세요'),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 3),
         ),
