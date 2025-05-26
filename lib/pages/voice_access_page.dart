@@ -6,6 +6,7 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:voice_access_app/services/voice_access_service.dart';
+import 'package:voice_access_app/widgets/phonelogin_bottomsheet.dart';
 
 class VoiceAccessPage extends StatefulWidget {
   const VoiceAccessPage({super.key});
@@ -67,14 +68,13 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
       print('📦 파일 크기: $size bytes');
 
       if (exists && size > 0) {
-        // FIXME: 디버깅용(나중에 지울 것)
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                '📁 녹음 파일 경로: $path ✅ 존재 여부: $exists 📦 파일 크기: $size bytes'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text(
+        //         '📁 녹음 파일 경로: $path ✅ 존재 여부: $exists 📦 파일 크기: $size bytes'),
+        //     backgroundColor: Colors.green,
+        //   ),
+        // );
         setState(() {
           recordedFile = file;
         });
@@ -117,6 +117,16 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
         ),
       );
     }
+  }
+
+  void openPhoneLoginSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return PhoneloginBottomsheet();
+      },
+    );
   }
 
   @override
@@ -166,7 +176,8 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  TextButton(onPressed: () {}, child: Text("전화번호로 로그인")),
+                  TextButton(
+                      onPressed: openPhoneLoginSheet, child: Text("전화번호로 로그인")),
                 ],
               ),
       ),
