@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:voice_access_app/services/voice_access_service.dart';
@@ -58,19 +59,57 @@ class _PhoneloginBottomsheetState extends State<PhoneloginBottomsheet> {
       }
     } catch (e) {
       if (!mounted) return;
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text("에러 발생"),
-          content: Text("서버 오류 또는 네트워크 문제\n"),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text("확인"),
+
+      if (e is DioException) {
+        final statusCode = e.response?.statusCode;
+
+        if (statusCode == 404) {
+          // 사용자 없음
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text("회원 없음"),
+              content: Text("해당 전화번호로 등록된 회원이 없습니다."),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text("확인"),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
+          );
+        } else {
+          // 서버 오류 등 기타 DioError
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text("에러"),
+              content: Text("서버 응답 오류: ${e.response?.data ?? '알 수 없는 오류'}"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text("확인"),
+                ),
+              ],
+            ),
+          );
+        }
+      } else {
+        // DioError가 아닌 일반 예외 (네트워크 단절 등)
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text("에러 발생"),
+            content: Text("서버 또는 네트워크 오류가 발생했습니다."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text("확인"),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
