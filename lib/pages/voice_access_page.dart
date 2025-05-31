@@ -139,7 +139,7 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("음성인식 출입"),
+        title: const Text("KNU Gym"),
         actions: [
           TextButton(
             onPressed: () => Navigator.push(
@@ -165,7 +165,13 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
                 children: [
                   IconButton(
                     iconSize: 140,
-                    icon: Icon(isRecording ? Icons.stop_circle : Icons.mic),
+                    icon: isRecording
+                        ? const Icon(Icons.stop_circle)
+                        : Image.asset(
+                            'assets/icons/mic_icon.png',
+                            width: 160,
+                            height: 300,
+                          ),
                     onPressed: () async {
                       if (!isRecording) {
                         await startRecording();
