@@ -78,7 +78,9 @@ class _RecordingBottomsheetState extends State<RecordingBottomsheet> {
                 child: Text(
                   "🎙️ 녹음 ${recordedFiles.length}/5",
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ),
               const SizedBox(height: 24),

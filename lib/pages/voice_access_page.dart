@@ -122,6 +122,7 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
   void openPhoneLoginSheet() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Color(0xFF1C1C2E),
       isScrollControlled: true,
       builder: (context) {
         return PhoneloginBottomsheet();

@@ -134,9 +134,13 @@ class _PhoneloginBottomsheetState extends State<PhoneloginBottomsheet> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text("전화번호로 로그인",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white)),
             SizedBox(height: 16),
             TextFormField(
+              style: TextStyle(color: Colors.white),
               validator: (val) =>
                   val == null || val.trim().isEmpty || val.trim().length != 4
                       ? '전화번호은 필수 입력값입니다. 4자리 값으로 입력해주세요'

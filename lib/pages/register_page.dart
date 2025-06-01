@@ -124,6 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               children: [
                 TextFormField(
+                  style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(labelText: '이름'),
                   onSaved: (val) => _name = val ?? '',
                   validator: (val) => val == null || val.trim().isEmpty
@@ -131,6 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       : null,
                 ),
                 TextFormField(
+                  style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                       labelText: '전화번호', hintText: "010-0000-0000"),
                   keyboardType: TextInputType.phone,
@@ -146,20 +148,25 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                 ),
                 TextFormField(
+                  style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(labelText: '주소'),
                   onSaved: (val) => _address = val ?? '',
                 ),
                 TextFormField(
+                  style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(labelText: '몸무게'),
                   keyboardType: TextInputType.number,
                   onSaved: (val) => _weight = val ?? '',
                 ),
                 TextFormField(
+                  style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(labelText: '키'),
                   keyboardType: TextInputType.number,
                   onSaved: (val) => _height = val ?? '',
                 ),
                 DropdownButtonFormField<Gender>(
+                  style: TextStyle(
+                      color: Colors.white, backgroundColor: Color(0xFF1C1C2E)),
                   value: gender,
                   items: Gender.values
                       .map((g) => DropdownMenuItem(
