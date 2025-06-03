@@ -6,6 +6,7 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:voice_access_app/services/voice_access_service.dart';
+import 'package:voice_access_app/widgets/phonelogin_bottomsheet.dart';
 
 class VoiceAccessPage extends StatefulWidget {
   const VoiceAccessPage({super.key});
@@ -67,14 +68,13 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
       print('📦 파일 크기: $size bytes');
 
       if (exists && size > 0) {
-        // FIXME: 디버깅용(나중에 지울 것)
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                '📁 녹음 파일 경로: $path ✅ 존재 여부: $exists 📦 파일 크기: $size bytes'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(
+        //     content: Text(
+        //         '📁 녹음 파일 경로: $path ✅ 존재 여부: $exists 📦 파일 크기: $size bytes'),
+        //     backgroundColor: Colors.green,
+        //   ),
+        // );
         setState(() {
           recordedFile = file;
         });
@@ -119,6 +119,17 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
     }
   }
 
+  void openPhoneLoginSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Color(0xFF1C1C2E),
+      isScrollControlled: true,
+      builder: (context) {
+        return PhoneloginBottomsheet();
+      },
+    );
+  }
+
   @override
   void dispose() {
     recorder.closeRecorder();
@@ -129,7 +140,7 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("음성인식 출입"),
+        title: const Text("KNU Gym"),
         actions: [
           TextButton(
             onPressed: () => Navigator.push(
@@ -155,7 +166,13 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
                 children: [
                   IconButton(
                     iconSize: 140,
-                    icon: Icon(isRecording ? Icons.stop_circle : Icons.mic),
+                    icon: isRecording
+                        ? const Icon(Icons.stop_circle)
+                        : Image.asset(
+                            'assets/icons/mic_icon.png',
+                            width: 160,
+                            height: 300,
+                          ),
                     onPressed: () async {
                       if (!isRecording) {
                         await startRecording();
@@ -166,7 +183,8 @@ class _VoiceAccessPageState extends State<VoiceAccessPage> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  TextButton(onPressed: () {}, child: Text("전화번호로 로그인")),
+                  TextButton(
+                      onPressed: openPhoneLoginSheet, child: Text("전화번호로 로그인")),
                 ],
               ),
       ),

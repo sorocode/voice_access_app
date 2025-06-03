@@ -27,4 +27,10 @@ class VoiceAccessService {
       options: Options(contentType: "multipart/form-data"),
     );
   }
+
+  Future<Response> loginWithPhoneNum(String last4Digits) async {
+    final response =
+        await dio.post("/api/login/phoneNum?last4Digits=$last4Digits");
+    return response;
+  }
 }

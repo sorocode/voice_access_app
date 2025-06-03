@@ -4,7 +4,7 @@ import 'package:voice_access_app/pages/voice_access_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(79, 37, 103, 255),
+  seedColor: const Color(0xFF1C1C2E),
 );
 var kDarkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
@@ -48,6 +48,8 @@ class App extends StatelessWidget {
           //   color: kColorScheme.secondaryContainer,
           //   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           // ),
+
+          scaffoldBackgroundColor: Color(0xFF1C1C2E),
           elevatedButtonTheme: ElevatedButtonThemeData(
               style: ElevatedButton.styleFrom(
             backgroundColor: kColorScheme.primaryContainer,
